@@ -1,0 +1,123 @@
+---
+title: "iteraction_listcols"
+output:   
+  github_document
+---
+
+site_libs for HW4 potential answer on discussion board
+
+Data frames are basically a special kind of list.
+- Can use list column into data frame which differing types of variables
+
+### Load packages
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+set.seed(1)
+```
+
+## List
+```{r}
+vec_numeric = 5:8
+vec_logical = c(TRUE, FALSE, TRUE, TRUE)
+```
+
+Let's look at a list
+```{r}
+l = list(
+  vec_numeric = 5:8,
+  mat         = matrix (1:8, 2, 4),
+  vec_logical = c(TRUE, FALSE),
+  summary     = summary(rnorm(1000))
+)
+```
+
+Accessing list items
+```{r}
+l$vec_numeric
+
+l[[3]]
+
+l[["mat"]]
+```
+
+
+## Loops!
+Let's write a for loop to take mean and SD of four samples from a normal distribution
+```{r}
+list_norm <- 
+  list(
+    a = rnorm(20, 5, 4),
+    b = rnorm(20, -12, 3),
+    c = rnorm(20, 17, 0.4),
+    d = rnorm(20, 100, 1)
+  )
+```
+
+Here's my function
+
+```{r}
+mean_and_sd <- function(x){
+  if(!is.numeric(x)){
+    stop("Mean and SD only work for numbers")
+  }
+  
+  if (length(x) < 3){
+    stop("Z scores really only work if you have three or more numbers")
+  }
+  
+  mean_x = mean(x)
+  sd_x = sd(x)
+  
+  tibble(
+    mean = mean_x,
+    sd = sd_x
+  )
+}
+```
+
+Let's try to make this work
+```{r}
+mean_and_sd(list_norm[[1]])
+mean_and_sd(list_norm[[2]])
+mean_and_sd(list_norm[[3]])
+mean_and_sd(list_norm[[4]])
+
+```
+
+Let's use a `for` loop instead
+```{r}
+output <- vector("list", length = 4)
+
+for (i in 1:4){
+  
+  output[[i]] = mean_and_sd(list_norm[[i]])
+
+}
+```
+
+## Map!!
+
+```{r}
+map(list_norm, mean_and_sd)
+```
+
+so... what about other functions?
+
+```{r}
+map(list_norm, median)
+map(list_norm, var)
+map(list_norm, summary)
+```
+
+map variants...
+```{r}
+map_dbl(list_norm, median)
+
+map_df(list_norm, mean_and_sd)
+```
+
+
+
+
+
+
